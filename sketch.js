@@ -5,11 +5,6 @@ let fps = 0;
 const CANVAS_W = 960;
 const CANVAS_H = 1280;
 
-const BUTTON_W = CANVAS_W/4;
-const BUTTON_H = BUTTON_W/2;
-const BUTTON_Y = CANVAS_H*3/5;
-const BUTTON_M = 24;
-
 const GRAVITY = 1.0;
 const GRID_SIZE = 64;
 const GRID_W = 64;
@@ -19,7 +14,7 @@ const BALL_NUM = 3;
 const BALL_START_X = GRID_SIZE*4;
 const BALL_START_Y = GRID_SIZE*6;
 const BALL_SIZE = GRID_SIZE;
-const BALL_COLOR = 'red';
+const BALL_COLOR = ['red', 'blue', 'yellow'];
 const BALL_TOSS_SPEED = 34;
 const HAND_COLOR = 'lightYellow';
 const HAND_CENTER_L = GRID_SIZE*4;
@@ -31,6 +26,12 @@ const HAND_TOSS_ANGLE = 168;
 const HAND_ENABLE_ANGLE = 270;
 const HAND_MOVE_R = GRID_SIZE*2;
 const CATCH_RANGE = 50;
+
+const BUTTON_F = 8;
+const BUTTON_M = GRID_SIZE;
+const BUTTON_W = GRID_SIZE*6;
+const BUTTON_H = GRID_SIZE*4;
+const BUTTON_Y = GRID_SIZE*14;
 
 let leftButton, rightButton;
 let startButton;
@@ -77,8 +78,8 @@ function setup() {
 	time = millis();
 	rectMode(CENTER);
 
-	leftButton = buttonInit('←', BUTTON_W, BUTTON_H, (CANVAS_W-BUTTON_W*3)/2-BUTTON_M, BUTTON_Y+BUTTON_H+BUTTON_M);
-	rightButton = buttonInit('→', BUTTON_W, BUTTON_H, (CANVAS_W+BUTTON_W)/2+BUTTON_M, BUTTON_Y+BUTTON_H+BUTTON_M);
+	leftButton = buttonInit('←', BUTTON_W, BUTTON_H, (CANVAS_W-BUTTON_M)/2-BUTTON_W+BUTTON_F, BUTTON_Y+BUTTON_F);
+	rightButton = buttonInit('→', BUTTON_W, BUTTON_H, (CANVAS_W+BUTTON_M)/2+BUTTON_F, BUTTON_Y+BUTTON_F);
 //	startButton = buttonInit('START', BUTTON_W, BUTTON_H, (CANVAS_W-BUTTON_W)/2, BUTTON_Y+BUTTON_H+BUTTON_M);
 	leftButton.mousePressed(leftFn);
 	rightButton.mousePressed(rightFn);
@@ -217,7 +218,7 @@ function draw() {
 				}
 			}
 		}
-		fill(BALL_COLOR);
+		fill(BALL_COLOR[i]);
 		circle(balls[i].pos.x, balls[i].pos.y, BALL_SIZE);
 	}
 	fill(255);
