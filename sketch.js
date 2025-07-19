@@ -52,9 +52,17 @@ const DEBUG_VIEW_H = 20;
 function preload() {
 }
 function leftFn() {
+	if (!startFlag){
+		startFlag = true;
+		countValue = 0;
+	}
 	hands[0].move = true;
 }
 function rightFn() {
+	if (!startFlag){
+		startFlag = true;
+		countValue = 0;
+	}
 	hands[1].move = true;
 }
 function startFn() {
