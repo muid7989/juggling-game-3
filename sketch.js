@@ -20,14 +20,14 @@ const BALL_START_X = GRID_SIZE*4;
 const BALL_START_Y = GRID_SIZE*6;
 const BALL_SIZE = GRID_SIZE;
 const BALL_COLOR = 'red';
-const BALL_TOSS_SPEED = 32;
+const BALL_TOSS_SPEED = 34;
 const HAND_COLOR = 'lightYellow';
 const HAND_CENTER_L = GRID_SIZE*4;
 const HAND_CENTER_R = GRID_SIZE*11;
 const HAND_CENTER_Y = GRID_SIZE*11;
 const HAND_SIZE = GRID_SIZE*1.5;
-const HAND_SPEED = 15;
-const HAND_TOSS_ANGLE = 190;
+const HAND_SPEED = 12;
+const HAND_TOSS_ANGLE = 168;
 const HAND_ENABLE_ANGLE = 270;
 const HAND_MOVE_R = GRID_SIZE*2;
 const CATCH_RANGE = 50;
@@ -81,6 +81,7 @@ function setup() {
 }
 function resetFn() {
 	balls = [];
+	hands = [];
 	for (let i=0; i<2; i++){
 		let ball = ballInit();
 		balls.push(ball);
@@ -111,13 +112,16 @@ function buttonInit(text, w, h, x, y) {
 	button.style('font-size', '32px');
 	return button;
 }
-function handProc(hand, cw, rStart, centerX, centerY) {
+function handProc(hand, mirror, centerX, centerY) {
 	if (hand.move){
-		/*
 		if ((hand.angle<HAND_TOSS_ANGLE) && (hand.angle+HAND_SPEED >= HAND_TOSS_ANGLE)){
 			if (hand.ball>=0){
 				balls[hand.ball].caught = false;
-				balls[hand.ball].speed.x = BALL_TOSS_SPEED*cos((HAND_TOSS_ANGLE+90)*PI/180);
+				if (!mirror){
+					balls[hand.ball].speed.x = BALL_TOSS_SPEED*cos((HAND_TOSS_ANGLE+90)*PI/180);
+				}else{
+					balls[hand.ball].speed.x = -BALL_TOSS_SPEED*cos((HAND_TOSS_ANGLE+90)*PI/180);
+				}
 				balls[hand.ball].speed.y = BALL_TOSS_SPEED*sin((HAND_TOSS_ANGLE+90)*PI/180);
 				if (balls.length<BALL_NUM){
 					let ball = ballInit();
@@ -129,7 +133,6 @@ function handProc(hand, cw, rStart, centerX, centerY) {
 			}
 			hand.enable = false;
 		}
-		*/
 		hand.angle += HAND_SPEED;
 		if (hand.angle>=HAND_ENABLE_ANGLE){
 			hand.enable = true;
@@ -139,12 +142,12 @@ function handProc(hand, cw, rStart, centerX, centerY) {
 			hand.move = false;
 		}
 	}
-	if (cw){
-		hand.pos.x = centerX+HAND_MOVE_R*cos((hand.angle+rStart)*PI/180);
-		hand.pos.y = centerY+HAND_MOVE_R*sin((hand.angle+rStart)*PI/180);
+	if (!mirror){
+		hand.pos.x = centerX+HAND_MOVE_R*cos(hand.angle*PI/180);
+		hand.pos.y = centerY+HAND_MOVE_R*sin(hand.angle*PI/180);
 	}else{
-		hand.pos.x = centerX+HAND_MOVE_R*cos((rStart-hand.angle)*PI/180);
-		hand.pos.y = centerY+HAND_MOVE_R*sin((rStart-hand.angle)*PI/180);
+		hand.pos.x = centerX-HAND_MOVE_R*cos(hand.angle*PI/180);
+		hand.pos.y = centerY+HAND_MOVE_R*sin(hand.angle*PI/180);
 	}
 }
 function draw() {
@@ -171,10 +174,10 @@ function draw() {
 	textAlign(CENTER);
 	text(countValue, CANVAS_W/2, GRID_SIZE*3);
 	strokeWeight(0);
-	handProc(hands[0], false, 180, HAND_CENTER_L, HAND_CENTER_Y);
+	handProc(hands[0], true, HAND_CENTER_L, HAND_CENTER_Y);
 	fill(HAND_COLOR);
 	circle(hands[0].pos.x, hands[0].pos.y, HAND_SIZE);
-	handProc(hands[1], true, 0, HAND_CENTER_R, HAND_CENTER_Y);
+	handProc(hands[1], false, HAND_CENTER_R, HAND_CENTER_Y);
 	circle(hands[1].pos.x, hands[1].pos.y, HAND_SIZE);
 
 	for (let i=0; i<balls.length; i++){
@@ -186,15 +189,18 @@ function draw() {
 				resetFn();
 				break;
 			}
-			/*
-			if (sqrt((balls[i].pos.x-hx)*(balls[i].pos.x-hx)+(balls[i].pos.y-hy)*(balls[i].pos.y-hy)) <= CATCH_RANGE){
-				if (hands.enable && (hands.ball<0)){
-					balls[i].caught = true;
-					hands.ball = i;
-					countValue++;
+			for (let h=0; h<hands.length; h++){
+		//		const t = sqrt((balls[i].pos.x-hands[h].pos.x)*(balls[i].pos.x-hands[h].pos.x)+(balls[i].pos.y-hands[h].pos.y)*(balls[i].pos.y-hands[h].pos.y));
+		//		console.log(t);
+				if (sqrt((balls[i].pos.x-hands[h].pos.x)*(balls[i].pos.x-hands[h].pos.x)+(balls[i].pos.y-hands[h].pos.y)*(balls[i].pos.y-hands[h].pos.y)) <= CATCH_RANGE){
+		//			console.log(balls[i], hands[h]);
+					if (hands[h].enable && (hands[h].ball<0)){
+						balls[i].caught = true;
+						hands[h].ball = i;
+						countValue++;
+					}
 				}
 			}
-				*/
 		}else{
 			for (let h=0; h<hands.length; h++){
 				if (hands[h].ball==i){
